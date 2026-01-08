@@ -1,18 +1,19 @@
 import MapView from "../map/MapView";
+import type { AppMode } from "../../App";
 
 type AppLayoutProps = {
+  mode: AppMode;
+  selectedDate: number;
   children?: React.ReactNode;
 };
 
-function AppLayout({ children }: AppLayoutProps) {
+function AppLayout({ mode, selectedDate, children }: AppLayoutProps) {
   return (
     <div className="relative h-screen w-screen overflow-hidden">
-      {/* Map Layer */}
       <div className="absolute inset-0">
-        <MapView />
+        <MapView mode={mode} selectedDate={selectedDate} />
       </div>
 
-      {/* UI Overlay Layer */}
       <div className="relative z-10 h-full w-full pointer-events-none">
         {children}
       </div>
@@ -21,4 +22,3 @@ function AppLayout({ children }: AppLayoutProps) {
 }
 
 export default AppLayout;
-
