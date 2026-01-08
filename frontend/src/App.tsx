@@ -1,10 +1,14 @@
+import AppLayout from "./components/layout/AppLayout";
+
 function App() {
   return (
-    <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center">
-      <h1 className="text-4xl font-bold text-emerald-400">
-        Faro is Live
-      </h1>
-    </div>
+    <AppLayout>
+      <div className="absolute top-4 left-4 pointer-events-auto">
+        <div className="bg-slate-900/80 backdrop-blur rounded-lg px-4 py-2 text-white">
+          Faro MVP
+        </div>
+      </div>
+    </AppLayout>
   );
 }
 
