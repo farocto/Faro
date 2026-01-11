@@ -4,6 +4,8 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import type { AppMode } from "../../App";
 import { mockEvents } from "../../mocks/events";
 import { mockDrivers } from "../../mocks/drivers";
+import { mockSafetyZones } from "../../mocks/safetyZones";
+
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
@@ -28,6 +30,58 @@ function MapView({ mode, selectedDate }: MapViewProps) {
     });
 
     mapRef.current = map;
+    
+    map.on("load", () => 
+    {
+      map.addSource("safety-zones", {
+        type: "geojson",
+        data: {
+          type: "FeatureCollection",
+          features: mockSafetyZones.map((zone) => ({
+            type: "Feature",
+            properties: {
+              level: zone.level,
+              name: zone.name,
+            },
+            geometry: {
+              type: "Polygon",
+              coordinates: zone.coordinates,
+            },
+          })),
+        },
+      });
+
+      map.addLayer({
+        id: "safety-zones-fill",
+        type: "fill",
+        source: "safety-zones",
+        paint: {
+          "fill-color": [
+            "match",
+            ["get", "level"],
+            "safe",
+            "#16a34a",
+            "caution",
+            "#facc15",
+            "danger",
+            "#dc2626",
+            "#000000",
+          ],
+          "fill-opacity": 0.35,
+        },
+      });
+
+      map.addLayer({
+        id: "safety-zones-outline",
+        type: "line",
+        source: "safety-zones",
+        paint: {
+          "line-color": "#ffffff",
+          "line-width": 1,
+        },
+      });
+    });
+
 
     return () => {
       map.remove();
