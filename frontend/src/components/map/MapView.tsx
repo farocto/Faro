@@ -6,33 +6,66 @@ import { mockEvents } from "../../mocks/events";
 import { mockDrivers } from "../../mocks/drivers";
 import { mockSafetyZones } from "../../mocks/safetyZones";
 
-
+/* ===============================
+   MAPBOX GLOBAL CONFIGURATION
+   =============================== */
+// Access token loaded from environment variables
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
+/* ===============================
+   COMPONENT TYPES
+   =============================== */
 type MapViewProps = {
   mode: AppMode;
   selectedDate: number;
 };
 
+/* ===============================
+   MAP VIEW COMPONENT
+   =============================== */
 function MapView({ mode, selectedDate }: MapViewProps) {
+  /* ===============================
+     REFS (Persistent Objects)
+     =============================== */
+  // DOM container for Mapbox
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
+
+  // Mapbox map instance (persisted between renders)
   const mapRef = useRef<mapboxgl.Map | null>(null);
+
+  // Active markers currently displayed on the map
   const markersRef = useRef<mapboxgl.Marker[]>([]);
 
+  /* ===============================
+     INTERNAL HELPERS (2.3.3)
+     =============================== */
+  // INTERNAL ONLY: Get zone metadata for an event by zoneId
+  // This is NOT shown to users and is safe to use for logic only
+  const getZoneForEvent = (zoneId: string) => {
+    return mockSafetyZones.find((zone) => zone.id === zoneId);
+  };
+
+  /* ===============================
+     MAP INITIALIZATION (Runs Once)
+     =============================== */
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
+    // Create the Mapbox map
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: "mapbox://styles/mapbox/dark-v11",
-      center: [-69.9312, 18.4861],
+      center: [-69.9312, 18.4861], // Santo Domingo
       zoom: 12,
     });
 
     mapRef.current = map;
-    
-    map.on("load", () => 
-    {
+
+    /* ===============================
+       SAFETY ZONES SOURCE + LAYERS
+       =============================== */
+    map.on("load", () => {
+      // Add GeoJSON source for safety zones
       map.addSource("safety-zones", {
         type: "geojson",
         data: {
@@ -51,6 +84,7 @@ function MapView({ mode, selectedDate }: MapViewProps) {
         },
       });
 
+      // Fill layer (colored safety zones)
       map.addLayer({
         id: "safety-zones-fill",
         type: "fill",
@@ -71,6 +105,7 @@ function MapView({ mode, selectedDate }: MapViewProps) {
         },
       });
 
+      // Outline layer for visual clarity
       map.addLayer({
         id: "safety-zones-outline",
         type: "line",
@@ -82,54 +117,70 @@ function MapView({ mode, selectedDate }: MapViewProps) {
       });
     });
 
+    /* ===============================
+       SAFETY ZONE CLICK INTERACTION
+       =============================== */
     map.on("click", "safety-zones-fill", (e) => {
-    if (!e.features || !e.features[0]) return;
+      if (!e.features || !e.features[0]) return;
 
-    const { name, level } = e.features[0].properties as {
-      name: string;
-      level: string;
-    };
+      const { name, level } = e.features[0].properties as {
+        name: string;
+        level: string;
+      };
 
-    new mapboxgl.Popup()
-      .setLngLat(e.lngLat)
-      .setHTML(
-        `<strong>${name}</strong><br/>Safety: ${level.toUpperCase()}`
-      )
-      .addTo(map);
+      new mapboxgl.Popup()
+        .setLngLat(e.lngLat)
+        .setHTML(
+          `<strong>${name}</strong><br/>Safety: ${level.toUpperCase()}`
+        )
+        .addTo(map);
     });
 
+    // Cleanup map on component unmount
     return () => {
       map.remove();
     };
   }, []);
 
+  /* ===============================
+     RENDERING LOGIC (Markers)
+     =============================== */
   useEffect(() => {
     if (!mapRef.current) return;
 
-    // Clear existing markers
+    // Remove all existing markers before re-rendering
     markersRef.current.forEach((marker) => marker.remove());
     markersRef.current = [];
 
+    /* ===============================
+       EVENTS MODE
+       =============================== */
     if (mode === "events") {
-  const filteredEvents = mockEvents.filter(
-    (e) => e.daysFromToday === selectedDate
-  );
+      const filteredEvents = mockEvents.filter(
+        (e) => e.daysFromToday === selectedDate
+      );
 
-  filteredEvents.forEach((event) => {
-    const marker = new mapboxgl.Marker({
-      color: "#3b82f6", // Faro blue (neutral, non-judgmental)
-    })
-      .setLngLat([event.longitude, event.latitude])
-      .setPopup(
-        new mapboxgl.Popup().setText(event.title)
-      )
-      .addTo(mapRef.current!);
+      filteredEvents.forEach((event) => {
+        // INTERNAL: zone context available if needed (not displayed)
+        const zone = getZoneForEvent(event.zoneId);
 
-    markersRef.current.push(marker);
-  });
-}
+        const marker = new mapboxgl.Marker({
+          color: "#3b82f6", // Faro blue (neutral, client-safe)
+        })
+          .setLngLat([event.longitude, event.latitude])
+          .setPopup(new mapboxgl.Popup().setText(event.title))
+          .addTo(mapRef.current!);
 
-    
+        markersRef.current.push(marker);
+
+        // Example internal usage (debug / future logic)
+        // console.log(event.id, zone?.level);
+      });
+    }
+
+    /* ===============================
+       DRIVERS MODE
+       =============================== */
     if (mode === "drivers") {
       mockDrivers.forEach((driver) => {
         const marker = new mapboxgl.Marker({
@@ -141,18 +192,20 @@ function MapView({ mode, selectedDate }: MapViewProps) {
               : "gray",
         })
           .setLngLat([driver.longitude, driver.latitude])
-          .setPopup(
-            new mapboxgl.Popup().setText(driver.name)
-          )
+          .setPopup(new mapboxgl.Popup().setText(driver.name))
           .addTo(mapRef.current!);
 
         markersRef.current.push(marker);
       });
     }
+
+    /* ===== END OF RENDERING LOGIC ===== */
   }, [mode, selectedDate]);
 
+  /* ===============================
+     MAP CONTAINER
+     =============================== */
   return <div ref={mapContainerRef} className="h-full w-full" />;
 }
 
 export default MapView;
-

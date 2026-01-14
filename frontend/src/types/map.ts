@@ -14,3 +14,10 @@ export type Driver = {
   longitude: number;
   status: "available" | "busy" | "offline";
 };
+
+export type RiskLevel = "low" | "medium" | "high";
+
+export type Zone = {
+  id: string;
+  riskLevel: RiskLevel;
+};
