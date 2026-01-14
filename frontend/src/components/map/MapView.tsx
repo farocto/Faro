@@ -111,28 +111,24 @@ function MapView({ mode, selectedDate }: MapViewProps) {
     markersRef.current = [];
 
     if (mode === "events") {
-      const filteredEvents = mockEvents.filter(
-        (e) => e.daysFromToday === selectedDate
-      );
+  const filteredEvents = mockEvents.filter(
+    (e) => e.daysFromToday === selectedDate
+  );
 
-      filteredEvents.forEach((event) => {
-        const marker = new mapboxgl.Marker({
-          color:
-            event.riskLevel === "high"
-              ? "red"
-              : event.riskLevel === "medium"
-              ? "orange"
-              : "green",
-        })
-          .setLngLat([event.longitude, event.latitude])
-          .setPopup(
-            new mapboxgl.Popup().setText(event.title)
-          )
-          .addTo(mapRef.current!);
+  filteredEvents.forEach((event) => {
+    const marker = new mapboxgl.Marker({
+      color: "#3b82f6", // Faro blue (neutral, non-judgmental)
+    })
+      .setLngLat([event.longitude, event.latitude])
+      .setPopup(
+        new mapboxgl.Popup().setText(event.title)
+      )
+      .addTo(mapRef.current!);
 
-        markersRef.current.push(marker);
-      });
-    }
+    markersRef.current.push(marker);
+  });
+}
+
     
     if (mode === "drivers") {
       mockDrivers.forEach((driver) => {

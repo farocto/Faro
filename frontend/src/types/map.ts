@@ -4,7 +4,7 @@ export type Event = {
   latitude: number;
   longitude: number;
   daysFromToday: number;
-  riskLevel: "low" | "medium" | "high";
+  zoneId: string; // NEW
 };
 
 export type Driver = {
