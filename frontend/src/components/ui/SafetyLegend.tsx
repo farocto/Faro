@@ -1,21 +1,21 @@
 function SafetyLegend() {
   return (
-    <div className="pointer-events-auto bg-slate-900/80 backdrop-blur rounded-xl px-4 py-3 text-white shadow-lg">
-      <div className="text-sm font-semibold mb-2">Safety</div>
+    <div className="bg-black/70 text-white text-sm rounded p-3 space-y-2">
+      <div className="font-semibold">Safety Levels</div>
 
-      <div className="space-y-1 text-sm">
-        <div className="flex items-center gap-2">
-          <span className="h-3 w-3 rounded-full bg-green-500" />
-          <span>Safe</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="h-3 w-3 rounded-full bg-yellow-500" />
-          <span>Caution</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="h-3 w-3 rounded-full bg-red-500" />
-          <span>Danger</span>
-        </div>
+      <div className="flex items-center gap-2">
+        <span className="w-3 h-3 bg-green-600 inline-block rounded-sm" />
+        <span>Safe</span>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <span className="w-3 h-3 bg-yellow-400 inline-block rounded-sm" />
+        <span>Caution</span>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <span className="w-3 h-3 bg-red-600 inline-block rounded-sm" />
+        <span>Danger</span>
       </div>
     </div>
   );

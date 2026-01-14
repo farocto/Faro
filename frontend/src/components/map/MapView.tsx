@@ -82,6 +82,21 @@ function MapView({ mode, selectedDate }: MapViewProps) {
       });
     });
 
+    map.on("click", "safety-zones-fill", (e) => {
+    if (!e.features || !e.features[0]) return;
+
+    const { name, level } = e.features[0].properties as {
+      name: string;
+      level: string;
+    };
+
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML(
+        `<strong>${name}</strong><br/>Safety: ${level.toUpperCase()}`
+      )
+      .addTo(map);
+    });
 
     return () => {
       map.remove();
