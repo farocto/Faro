@@ -18,12 +18,21 @@ mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 type MapViewProps = {
   mode: AppMode;
   selectedDate: number;
+
+  // NEW — controlled by App
+  selectedEventId: string | null;
+  onSelectEvent: (id: string) => void;
 };
 
 /* ===============================
    MAP VIEW COMPONENT
    =============================== */
-function MapView({ mode, selectedDate }: MapViewProps) {
+function MapView({
+  mode,
+  selectedDate,
+  selectedEventId,
+  onSelectEvent,
+}: MapViewProps) {
   /* ===============================
      REFS (Persistent Objects)
      =============================== */
