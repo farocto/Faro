@@ -7,7 +7,7 @@ export const mockEvents: Event[] = [
     latitude: 18.4734,
     longitude: -69.8844,
     daysFromToday: 0,
-    riskLevel: "medium",
+    zoneId: "Zona-Colonial",
   },
   {
     id: "e2",
@@ -15,7 +15,7 @@ export const mockEvents: Event[] = [
     latitude: 18.4607,
     longitude: -69.9196,
     daysFromToday: 2,
-    riskLevel: "high",
+    zoneId: "Capotillo",
   },
   {
     id: "e3",
@@ -23,6 +23,6 @@ export const mockEvents: Event[] = [
     latitude: 18.5001,
     longitude: -69.9473,
     daysFromToday: 5,
-    riskLevel: "low",
+    zoneId: "low",
   },
 ];
