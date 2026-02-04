@@ -3,16 +3,11 @@ export type Event = {
   title: string;
   latitude: number;
   longitude: number;
-  daysFromToday: number;
-  zoneId: string; // NEW
-};
 
-export type Driver = {
-  id: string;
-  name: string;
-  latitude: number;
-  longitude: number;
-  status: "available" | "busy" | "offline";
+  startDateTime: string; // ISO string
+  endDateTime?: string;
+
+  zoneId: string;
 };
 
 export type RiskLevel = "low" | "medium" | "high";
