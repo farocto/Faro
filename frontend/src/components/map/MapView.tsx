@@ -76,7 +76,7 @@ function MapView({
             "#dc2626",
             "#000000",
           ],
-          "fill-opacity": 0.35,
+          "fill-opacity": 0.1,
         },
       });
 
@@ -87,6 +87,7 @@ function MapView({
         paint: {
           "line-color": "#ffffff",
           "line-width": 1,
+          "fill-opacity":0.2,
         },
       });
     });
@@ -104,13 +105,13 @@ function MapView({
     if (mode !== "events") return;
 
     const filteredEvents = mockEvents.filter((event) => {
-      const eventDate = event.startDateTime.slice(0, 10);
+      const eventDate = event.date;
       return eventDate === selectedDate;
     });
 
     filteredEvents.forEach((event) => {
       const marker = new mapboxgl.Marker({ color: "#3b82f6" })
-        .setLngLat([event.longitude, event.latitude])
+        .setLngLat([event.coordinates[0], event.coordinates[1]])
         .setPopup(new mapboxgl.Popup().setText(event.title))
         .addTo(mapRef.current!);
 

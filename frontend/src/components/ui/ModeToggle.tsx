@@ -17,14 +17,7 @@ function ModeToggle({ mode, onChange }: ModeToggleProps) {
         Events
       </button>
 
-      <button
-        onClick={() => onChange("drivers")}
-        className={`px-3 py-1 rounded ${
-          mode === "drivers" ? "bg-blue-600" : "bg-gray-700"
-        }`}
-      >
-        Drivers
-      </button>
+      
     </div>
   );
 }

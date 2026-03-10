@@ -1,28 +1,21 @@
-import type { Event } from "../types/map";
+export type EventPin = {
+  id: string;
+  title: string;
+  date: string; // ISO YYYY-MM-DD
+  coordinates: [number, number]; // [lng, lat]
+};
 
-export const mockEvents: Event[] = [
+export const mockEvents: EventPin[] = [
   {
-    id: "e1",
-    title: "Concert Zona Colonial",
-    latitude: 18.4734,
-    longitude: -69.8844,
-    startDateTime: "2026-01-30T20:00:00-04:00",
-    zoneId: "Zona-Colonial",
+    id: "1",
+    title: "Concert",
+    date: "2026-03-20",
+    coordinates: [-69.902, 18.486],
   },
   {
-    id: "e2",
-    title: "Football Match",
-    latitude: 18.4607,
-    longitude: -69.9196,
-    startDateTime: "2026-01-31T18:30:00-04:00",
-    zoneId: "Capotillo",
-  },
-  {
-    id: "e3",
-    title: "Street Festival",
-    latitude: 18.5001,
-    longitude: -69.9473,
-    startDateTime: "2026-02-02T16:00:00-04:00",
-    zoneId: "low",
+    id: "2",
+    title: "Festival",
+    date: "2026-03-11",
+    coordinates: [-69.93, 18.47],
   },
 ];
