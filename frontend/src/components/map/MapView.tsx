@@ -87,9 +87,14 @@ function MapView({
         paint: {
           "line-color": "#ffffff",
           "line-width": 1,
-          "fill-opacity":0.2,
+          "fill-opacity": 0.2,
         },
       });
+    });
+
+    /* CLOSE PANEL WHEN CLICKING MAP */
+    map.on("click", () => {
+      onSelectEvent(null);
     });
 
     return () => map.remove();
@@ -110,18 +115,24 @@ function MapView({
     });
 
     filteredEvents.forEach((event) => {
-      const marker = new mapboxgl.Marker({ color: "#3b82f6" })
+
+      const isSelected = event.id === selectedEventId;
+
+      const marker = new mapboxgl.Marker({
+        color: isSelected ? "#ffffff" : "#3b82f6", // highlight selected
+      })
         .setLngLat([event.coordinates[0], event.coordinates[1]])
-        .setPopup(new mapboxgl.Popup().setText(event.title))
         .addTo(mapRef.current!);
 
-      marker.getElement().addEventListener("click", () => {
+      marker.getElement().addEventListener("click", (e) => {
+        e.stopPropagation(); // prevents map click closing panel
         onSelectEvent(event.id);
       });
 
       markersRef.current.push(marker);
     });
-  }, [mode, selectedDate]);
+
+  }, [mode, selectedDate, selectedEventId]); // add selectedEventId
 
   return <div ref={mapContainerRef} className="h-full w-full" />;
 }

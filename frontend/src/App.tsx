@@ -3,6 +3,8 @@ import { useState } from "react";
 import AppLayout from "./components/layout/AppLayout";
 import DateSlider from "./components/ui/DateSlider";
 import SafetyLegend from "./components/ui/SafetyLegend";
+import EventPanel from "./components/ui/EventPanel"; // ✅ ADD
+import { mockEvents } from "./mocks/events"; // ✅ ADD
 
 /**
  * MVP App Mode
@@ -22,8 +24,12 @@ function App() {
 
   const [selectedDate, setSelectedDate] = useState<string>(todayISO);
 
-
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+
+  // ✅ FIND SELECTED EVENT
+  const selectedEvent = mockEvents.find(
+    (event) => event.id === selectedEventId
+  );
 
   return (
     <AppLayout
@@ -44,6 +50,16 @@ function App() {
       <div className="absolute bottom-4 left-4 pointer-events-auto">
         <SafetyLegend />
       </div>
+
+      {/* EVENT PANEL */}
+      {selectedEvent && (
+        <div className="pointer-events-auto">
+          <EventPanel
+            event={selectedEvent}
+            onClose={() => setSelectedEventId(null)}
+          />
+        </div>
+      )}
 
       {/* TEMP DEBUG */}
       {selectedEventId && (
