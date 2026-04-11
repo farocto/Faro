@@ -3,14 +3,15 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import type { AppMode } from "../../App";
-import { mockEvents } from "../../mocks/events";
+import type { EventPin } from "../../mocks/events";
 import { mockSafetyZones } from "../../mocks/safetyZones";
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
 type MapViewProps = {
   mode: AppMode;
-  selectedDate: string; // ISO date YYYY-MM-DD
+  selectedDate: string;
+  events: EventPin[];
   selectedEventId: string | null;
   onSelectEvent: (id: string | null) => void;
 };
@@ -18,6 +19,7 @@ type MapViewProps = {
 function MapView({
   mode,
   selectedDate,
+  events,
   selectedEventId,
   onSelectEvent,
 }: MapViewProps) {
@@ -25,10 +27,6 @@ function MapView({
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
 
-  const getZoneForEvent = (zoneId: string) =>
-    mockSafetyZones.find((zone) => zone.id === zoneId);
-
-  /* MAP INIT */
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -87,12 +85,10 @@ function MapView({
         paint: {
           "line-color": "#ffffff",
           "line-width": 1,
-          "fill-opacity": 0.2,
         },
       });
     });
 
-    /* CLOSE PANEL WHEN CLICKING MAP */
     map.on("click", () => {
       onSelectEvent(null);
     });
@@ -100,7 +96,6 @@ function MapView({
     return () => map.remove();
   }, []);
 
-  /* EVENT MARKERS */
   useEffect(() => {
     if (!mapRef.current) return;
 
@@ -109,30 +104,25 @@ function MapView({
 
     if (mode !== "events") return;
 
-    const filteredEvents = mockEvents.filter((event) => {
-      const eventDate = event.date;
-      return eventDate === selectedDate;
-    });
+    const filteredEvents = events.filter((event) => event.date === selectedDate);
 
     filteredEvents.forEach((event) => {
-
       const isSelected = event.id === selectedEventId;
 
       const marker = new mapboxgl.Marker({
-        color: isSelected ? "#ffffff" : "#3b82f6", // highlight selected
+        color: isSelected ? "#ffffff" : "#3b82f6",
       })
-        .setLngLat([event.coordinates[0], event.coordinates[1]])
+        .setLngLat(event.coordinates)
         .addTo(mapRef.current!);
 
       marker.getElement().addEventListener("click", (e) => {
-        e.stopPropagation(); // prevents map click closing panel
+        e.stopPropagation();
         onSelectEvent(event.id);
       });
 
       markersRef.current.push(marker);
     });
-
-  }, [mode, selectedDate, selectedEventId]); // add selectedEventId
+  }, [mode, selectedDate, selectedEventId, events]);
 
   return <div ref={mapContainerRef} className="h-full w-full" />;
 }

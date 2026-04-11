@@ -2,6 +2,7 @@ import { useState } from "react";
 import DateSlider from "../components/ui/DateSlider";
 import MapView from "../components/map/MapView";
 import type { AppMode } from "../App";
+import { mockEvents } from "../mocks/events";
 
 function HomePage() {
   const todayISO = new Date().toISOString().split("T")[0];
@@ -22,6 +23,7 @@ function HomePage() {
         selectedDate={selectedDate}
         selectedEventId={selectedEventId}
         onSelectEvent={setSelectedEventId}
+        events={mockEvents}
       />
     </>
   );
