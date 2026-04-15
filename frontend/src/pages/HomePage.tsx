@@ -24,6 +24,8 @@ function HomePage() {
         selectedEventId={selectedEventId}
         onSelectEvent={setSelectedEventId}
         events={mockEvents}
+        pendingEvent={null}
+        onPendingEventMove={() => {}}
       />
     </>
   );

@@ -4,8 +4,15 @@ export type EventPin = {
   date: string;
   coordinates: [number, number];
 
-  address: string;
-  location: string;
+  venueName: string;
+  streetAddress: string;
+  neighborhood: string;
+  city: string;
+  postalCode: string;
+
+  address: string; // final formatted address from geocoder
+  location: string; // keep for compatibility/display
+
   business: string;
   attendees: number;
   ticketPrice: number;
@@ -19,8 +26,16 @@ export const mockEvents: EventPin[] = [
     title: "Concert",
     date: "2026-03-20",
     coordinates: [-69.902, 18.486],
+
+    venueName: "Example Venue",
+    streetAddress: "Mercedes 341 esq Calle, C. Santomé",
+    neighborhood: "Zona Colonial",
+    city: "Santo Domingo",
+    postalCode: "",
+
     address: "Mercedes 341 esq Calle, C. Santomé, Santo Domingo",
     location: "Santo Domingo",
+
     business: "Example Venue",
     attendees: 100,
     ticketPrice: 10,
@@ -32,8 +47,16 @@ export const mockEvents: EventPin[] = [
     title: "Festival",
     date: "2026-03-11",
     coordinates: [-69.93, 18.47],
+
+    venueName: "Festival Grounds",
+    streetAddress: "Av. Sarasota",
+    neighborhood: "",
+    city: "Santo Domingo",
+    postalCode: "",
+
     address: "C2XX+28P, Av. Sarasota, Santo Domingo",
     location: "Santo Domingo",
+
     business: "Festival Grounds",
     attendees: 250,
     ticketPrice: 20,

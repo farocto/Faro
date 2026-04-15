@@ -14,6 +14,9 @@ type MapViewProps = {
   events: EventPin[];
   selectedEventId: string | null;
   onSelectEvent: (id: string | null) => void;
+
+  pendingEvent: EventPin | null;
+  onPendingEventMove: (coordinates: [number, number]) => void;
 };
 
 function MapView({
@@ -22,10 +25,13 @@ function MapView({
   events,
   selectedEventId,
   onSelectEvent,
+  pendingEvent,
+  onPendingEventMove,
 }: MapViewProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
+  const pendingMarkerRef = useRef<mapboxgl.Marker | null>(null);
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
@@ -94,7 +100,7 @@ function MapView({
     });
 
     return () => map.remove();
-  }, []);
+  }, [onSelectEvent]);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -122,7 +128,46 @@ function MapView({
 
       markersRef.current.push(marker);
     });
-  }, [mode, selectedDate, selectedEventId, events]);
+  }, [mode, selectedDate, selectedEventId, events, onSelectEvent]);
+
+  useEffect(() => {
+    if (!mapRef.current) return;
+
+    if (pendingMarkerRef.current) {
+      pendingMarkerRef.current.remove();
+      pendingMarkerRef.current = null;
+    }
+
+    if (!pendingEvent) return;
+
+    const marker = new mapboxgl.Marker({
+      color: "#ffffff",
+      draggable: true,
+    })
+      .setLngLat(pendingEvent.coordinates)
+      .addTo(mapRef.current);
+
+    marker.on("dragend", () => {
+      const lngLat = marker.getLngLat();
+      onPendingEventMove([lngLat.lng, lngLat.lat]);
+    });
+
+    pendingMarkerRef.current = marker;
+
+    mapRef.current.flyTo({
+      center: pendingEvent.coordinates,
+      zoom: 16,
+      speed: 1.1,
+      curve: 1.2,
+      essential: true,
+    });
+  }, [pendingEvent, onPendingEventMove]);
+
+  useEffect(() => {
+    if (!pendingMarkerRef.current || !pendingEvent) return;
+
+    pendingMarkerRef.current.setLngLat(pendingEvent.coordinates);
+  }, [pendingEvent?.coordinates]);
 
   return <div ref={mapContainerRef} className="h-full w-full" />;
 }

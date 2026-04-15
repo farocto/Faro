@@ -10,6 +10,14 @@ function EventPanel({ event, onClose }: EventPanelProps) {
   const [favorited, setFavorited] = useState(false);
   const [reserved, setReserved] = useState(false);
 
+  const venueLine = event.venueName || event.business || "Not provided";
+
+  const streetLine = [event.streetAddress, event.neighborhood]
+    .filter(Boolean)
+    .join(", ");
+
+  const cityLine = [event.city, event.postalCode].filter(Boolean).join(" ");
+
   return (
     <div className="absolute right-4 top-20 w-[360px] bg-neutral-900 text-white rounded-2xl shadow-xl border border-white/10 overflow-hidden">
       <div className="p-4 border-b border-white/10 flex justify-between items-center">
@@ -35,34 +43,56 @@ function EventPanel({ event, onClose }: EventPanelProps) {
         )}
       </div>
 
-      <div className="p-4 space-y-3 text-sm">
+      <div className="p-4 space-y-4 text-sm">
         <div>
-          <span className="text-white/60">Date:</span> {event.date}
+          <div className="text-white/60 mb-1">Date</div>
+          <div>{event.date}</div>
         </div>
 
         <div>
-          <span className="text-white/60">Location:</span> {event.location}
+          <div className="text-white/60 mb-1">Location</div>
+          <div className="space-y-1">
+            <div className="font-medium text-white">
+              {venueLine}
+            </div>
+
+            {streetLine ? (
+              <div className="text-white/90">{streetLine}</div>
+            ) : (
+              <div className="text-white/50">Street not provided</div>
+            )}
+
+            {cityLine ? (
+              <div className="text-white/75">{cityLine}</div>
+            ) : (
+              <div className="text-white/50">City not provided</div>
+            )}
+
+            {event.address && (
+              <div className="mt-2 rounded-lg bg-white/5 px-3 py-2 text-xs text-white/55">
+                Resolved address: {event.address}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <div className="text-white/60 mb-1">Attendees</div>
+            <div>{event.attendees}</div>
+          </div>
+
+          <div>
+            <div className="text-white/60 mb-1">Ticket Price</div>
+            <div>${event.ticketPrice}</div>
+          </div>
         </div>
 
         <div>
-          <span className="text-white/60">Address:</span> {event.address}
-        </div>
-
-        <div>
-          <span className="text-white/60">Business:</span> {event.business}
-        </div>
-
-        <div>
-          <span className="text-white/60">Attendees:</span> {event.attendees}
-        </div>
-
-        <div>
-          <span className="text-white/60">Ticket Price:</span> ${event.ticketPrice}
-        </div>
-
-        <div>
-          <span className="text-white/60">Description:</span>
-          <p className="text-white/80 mt-1">{event.description}</p>
+          <div className="text-white/60 mb-1">Description</div>
+          <p className="text-white/80">
+            {event.description || "No description provided."}
+          </p>
         </div>
       </div>
 

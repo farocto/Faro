@@ -6,6 +6,7 @@ import SafetyLegend from "./components/ui/SafetyLegend";
 import EventPanel from "./components/ui/EventPanel";
 import CreateEventButton from "./components/ui/CreateEventButton";
 import CreateEventModal from "./components/ui/CreateEventModal";
+import LocationConfirmPanel from "./components/ui/LocationConfirmPanel";
 import { mockEvents, type EventPin } from "./mocks/events";
 
 export type AppMode = "events";
@@ -19,12 +20,34 @@ function App() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [events, setEvents] = useState<EventPin[]>(mockEvents);
 
+  const [pendingEvent, setPendingEvent] = useState<EventPin | null>(null);
+
   const selectedEvent = events.find((event) => event.id === selectedEventId);
 
-  const handlePublishEvent = (newEvent: EventPin) => {
-    setEvents((prev) => [...prev, newEvent]);
-    setSelectedEventId(newEvent.id);
-    setSelectedDate(newEvent.date);
+  const handlePreviewLocation = (draftEvent: EventPin) => {
+    setPendingEvent(draftEvent);
+    setIsCreateModalOpen(false);
+    setSelectedEventId(null);
+    setSelectedDate(draftEvent.date);
+  };
+
+  const handlePendingEventMove = (coordinates: [number, number]) => {
+    setPendingEvent((prev) =>
+      prev ? { ...prev, coordinates } : null
+    );
+  };
+
+  const handleConfirmPendingEvent = () => {
+    if (!pendingEvent) return;
+
+    setEvents((prev) => [...prev, pendingEvent]);
+    setSelectedEventId(pendingEvent.id);
+    setSelectedDate(pendingEvent.date);
+    setPendingEvent(null);
+  };
+
+  const handleCancelPendingEvent = () => {
+    setPendingEvent(null);
   };
 
   return (
@@ -34,6 +57,8 @@ function App() {
       events={events}
       selectedEventId={selectedEventId}
       onSelectEvent={setSelectedEventId}
+      pendingEvent={pendingEvent}
+      onPendingEventMove={handlePendingEventMove}
     >
       <div className="absolute top-4 right-4 pointer-events-auto">
         <CreateEventButton onClick={() => setIsCreateModalOpen(true)} />
@@ -50,7 +75,7 @@ function App() {
         <SafetyLegend />
       </div>
 
-      {selectedEvent && (
+      {selectedEvent && !pendingEvent && (
         <div className="pointer-events-auto">
           <EventPanel
             event={selectedEvent}
@@ -63,11 +88,21 @@ function App() {
         <CreateEventModal
           selectedDate={selectedDate}
           onClose={() => setIsCreateModalOpen(false)}
-          onPublish={handlePublishEvent}
+          onPreviewLocation={handlePreviewLocation}
         />
       )}
 
-      {selectedEventId && (
+      {pendingEvent && (
+        <div className="pointer-events-auto">
+          <LocationConfirmPanel
+            event={pendingEvent}
+            onConfirm={handleConfirmPendingEvent}
+            onCancel={handleCancelPendingEvent}
+          />
+        </div>
+      )}
+
+      {selectedEventId && !pendingEvent && (
         <div className="absolute bottom-20 left-1/2 -translate-x-1/2 bg-black/80 text-white px-4 py-2 rounded-xl text-sm pointer-events-none">
           Selected event: {selectedEventId}
         </div>

@@ -8,6 +8,10 @@ type AppLayoutProps = {
   selectedEventId: string | null;
   onSelectEvent: (id: string | null) => void;
   events: EventPin[];
+
+  pendingEvent: EventPin | null;
+  onPendingEventMove: (coordinates: [number, number]) => void;
+  
   children: React.ReactNode;
 };
 
@@ -17,6 +21,8 @@ function AppLayout({
   selectedEventId,
   onSelectEvent,
   events,
+  pendingEvent,
+  onPendingEventMove,
   children,
 }: AppLayoutProps) {
   return (
@@ -28,6 +34,8 @@ function AppLayout({
           selectedEventId={selectedEventId}
           onSelectEvent={onSelectEvent}
           events={events}
+          pendingEvent={pendingEvent}
+          onPendingEventMove={onPendingEventMove}
         />
       </div>
 
