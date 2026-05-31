@@ -6,7 +6,7 @@
 # Build output
 bin/
 obj/
-
+*.slnx
 # Node (frontend)
 node_modules/
 
