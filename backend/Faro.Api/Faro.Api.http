@@ -1,0 +1,51 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+@baseUrl = https://localhost:7270
+
+### Health check
+GET {{baseUrl}}/
+
+### Get all venues
+GET {{baseUrl}}/api/venues
+
+### Create venue
+POST {{baseUrl}}/api/venues
+Content-Type: application/json
+
+{
+  "name": "Test Venue",
+  "addressLine1": "123 Main Street",
+  "addressLine2": null,
+  "city": "Santo Domingo",
+  "state": "Distrito Nacional",
+  "postalCode": null,
+  "country": "Dominican Republic",
+  "latitude": 18.4861,
+  "longitude": -69.9312,
+  "placeId": null,
+  "venueType": "Indoor",
+  "capacity": 100,
+  "isRentable": true,
+  "rentalNotes": "Available for small community events.",
+  "isPubliclyListed": true
+}
+
+### Get all events
+GET {{baseUrl}}/api/events
+
+### Create event
+POST {{baseUrl}}/api/events
+Content-Type: application/json
+
+{
+  "title": "Test Faro Event",
+  "description": "First test event using a real venue from SQL Server.",
+  "startAtUtc": "2026-06-10T23:00:00Z",
+  "endAtUtc": "2026-06-11T01:00:00Z",
+  "isFree": true,
+  "priceAmount": null,
+  "priceLabel": "Free",
+  "category": "Community",
+  "imageUrl": null,
+  "externalUrl": null,
+  "venueId": "0381ed1e-7e4a-4aa7-97af-50e2a621f262"
+}

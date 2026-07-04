@@ -3,7 +3,7 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import type { AppMode } from "../../App";
-import type { EventPin } from "../../mocks/events";
+import type { EventPin } from "../../types/map";
 import { mockSafetyZones } from "../../mocks/safetyZones";
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;

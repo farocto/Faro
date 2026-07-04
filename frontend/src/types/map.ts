@@ -16,3 +16,28 @@ export type Zone = {
   id: string;
   riskLevel: RiskLevel;
 };
+
+export type EventPin = {
+  id: string;
+  title: string;
+
+  date: string;
+  startAtUtc: string;
+  endAtUtc: string | null;
+
+  coordinates: [number, number];
+
+  venueId: string;
+  venueName: string;
+  address: string;
+
+  category: string | null;
+  imageUrl: string | null;
+
+  isFree: boolean;
+  priceAmount: number | null;
+  priceLabel: string | null;
+
+  status: string;
+  description: string | null;
+};

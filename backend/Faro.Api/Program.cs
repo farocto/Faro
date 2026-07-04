@@ -17,6 +17,17 @@ builder.Services.AddOpenApi();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IVenueService, VenueService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FaroFrontend", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -25,6 +36,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("FaroFrontend");
 
 app.MapControllers();
 
