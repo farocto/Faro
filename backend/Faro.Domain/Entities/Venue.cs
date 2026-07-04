@@ -27,6 +27,10 @@ namespace Faro.Domain.Entities
         public bool IsPubliclyListed { get; set; } = true;
 
         public ICollection<Event> Events { get; set; } = new List<Event>();
+
+        public Guid? OwnerBusinessAccountId { get; set; }
+
+        public BusinessAccount? OwnerBusinessAccount { get; set; }
     }
 
 }

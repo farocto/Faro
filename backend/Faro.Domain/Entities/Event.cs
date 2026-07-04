@@ -27,5 +27,8 @@ namespace Faro.Domain.Entities
         public Guid VenueId { get; set; }
         public Venue Venue { get; set; } = null!;
 
+        public Guid? HostBusinessAccountId { get; set; }
+
+        public BusinessAccount? HostBusinessAccount { get; set; }
     }
 }
