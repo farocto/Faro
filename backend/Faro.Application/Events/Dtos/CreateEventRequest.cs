@@ -4,6 +4,8 @@ public class CreateEventRequest
 {
     public string Title { get; set; } = string.Empty;
 
+    public Guid? HostBusinessId { get; set; }
+
     public string? Description { get; set; }
 
     public DateTime StartAtUtc { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace Faro.Domain.Enums;
 
-public enum BusinessAccountStatus
+public enum BusinessStatus
 {
     Pending = 0,
     Active = 1,

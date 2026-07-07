@@ -4,7 +4,10 @@ using Faro.Application.Events.Interfaces;
 using Faro.Infrastructure.Events.Services;
 using Faro.Application.Venues.Interfaces;
 using Faro.Infrastructure.Venues.Services;
-
+using Faro.Application.Businesses.Interfaces;
+using Faro.Application.UserAccounts.Interfaces;
+using Faro.Infrastructure.Businesses.Services;
+using Faro.Infrastructure.UserAccounts.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +19,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddOpenApi();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IVenueService, VenueService>();
+builder.Services.AddScoped<IUserAccountService, UserAccountService>();
+builder.Services.AddScoped<IBusinessService, BusinessService>();
 
 builder.Services.AddCors(options =>
 {

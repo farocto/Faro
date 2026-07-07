@@ -12,6 +12,8 @@ public class AppDbContext : DbContext
 
     public DbSet<Event> Events => Set<Event>();
     public DbSet<Venue> Venues => Set<Venue>();
+    public DbSet<UserAccount> UserAccounts => Set<UserAccount>();
+    public DbSet<Business> Businesses => Set<Business>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -79,6 +81,52 @@ public class AppDbContext : DbContext
                 .HasMaxLength(200);
         });
 
-      
+        modelBuilder.Entity<UserAccount>(entity =>
+        {
+            entity.ToTable("UserAccounts");
+
+            entity.HasKey(u => u.Id);
+
+            entity.Property(u => u.Email)
+                .IsRequired()
+                .HasMaxLength(256);
+
+            entity.Property(u => u.DisplayName)
+                .IsRequired()
+                .HasMaxLength(150);
+
+            entity.HasMany(u => u.Businesses)
+                .WithOne(b => b.OwnerUserAccount)
+                .HasForeignKey(b => b.OwnerUserAccountId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Business>(entity =>
+        {
+            entity.ToTable("Businesses");
+
+            entity.HasKey(b => b.Id);
+
+            entity.Property(b => b.Name)
+                .IsRequired()
+                .HasMaxLength(150);
+
+            entity.Property(b => b.Description)
+                .HasMaxLength(1000);
+
+            entity.Property(b => b.BusinessType)
+                .HasMaxLength(100);
+
+            entity.HasMany(b => b.Events)
+                .WithOne(e => e.HostBusiness)
+                .HasForeignKey(e => e.HostBusinessId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasMany(b => b.Venues)
+                .WithOne(v => v.OwnerBusiness)
+                .HasForeignKey(v => v.OwnerBusinessId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
     }
 }

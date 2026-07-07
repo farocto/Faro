@@ -12,5 +12,5 @@ public class UserAccount : BaseEntity
 
     public bool IsActive { get; set; } = true;
 
-    public ICollection<BusinessAccount> BusinessAccounts { get; set; } = new List<BusinessAccount>();
+    public ICollection<Business> Businesses { get; set; } = new List<Business>();
 }

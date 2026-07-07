@@ -49,3 +49,54 @@ Content-Type: application/json
   "externalUrl": null,
   "venueId": "0381ed1e-7e4a-4aa7-97af-50e2a621f262"
 }
+
+@baseUrl = https://localhost:7270
+
+### Create user account
+POST {{baseUrl}}/api/user-accounts
+Content-Type: application/json
+
+{
+  "email": "diego@test.com",
+  "displayName": "Diego Test"
+}
+
+### Get user account by id
+GET {{baseUrl}}/api/user-accounts/0F945146-18D9-408B-BEF8-68ECE1426E23
+
+### Create business
+POST {{baseUrl}}/api/businesses
+Content-Type: application/json
+
+{
+  "name": "Diego Events",
+  "description": "Test business account for event hosting.",
+  "businessType": "Event Host",
+  "venueRelationship": 2,
+  "ownerUserAccountId": "0F945146-18D9-408B-BEF8-68ECE1426E23"
+}
+
+### Get business by id
+GET {{baseUrl}}/api/businesses/fbd7dae0-3e47-4c92-8020-d8d2ee1ec2dc
+
+### Get businesses for user
+GET {{baseUrl}}/api/user-accounts/0F945146-18D9-408B-BEF8-68ECE1426E23/businesses
+
+### Create business-owned event
+POST {{baseUrl}}/api/events
+Content-Type: application/json
+
+{
+  "title": "Business-Owned Test Event",
+  "hostBusinessId": "FBD7DAE0-3E47-4C92-8020-D8D2EE1EC2DC",
+  "description": "Testing event ownership by business.",
+  "startAtUtc": "2026-07-08T23:00:00Z",
+  "endAtUtc": "2026-07-09T01:00:00Z",
+  "isFree": true,
+  "priceAmount": null,
+  "priceLabel": "Free",
+  "category": "Test",
+  "imageUrl": null,
+  "externalUrl": null,
+  "venueId": "0381ED1E-7E4A-4AA7-97AF-50E2A621F262"
+}

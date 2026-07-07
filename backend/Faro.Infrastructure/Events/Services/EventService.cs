@@ -21,6 +21,7 @@ public class EventService : IEventService
         var query = _dbContext.Events
             .AsNoTracking()
             .Include(e => e.Venue)
+            .Include(e => e.HostBusiness)
             .AsQueryable();
 
         if (dateUtc.HasValue)
@@ -51,7 +52,9 @@ public class EventService : IEventService
                 VenueAddress = e.Venue.AddressLine1,
                 Latitude = e.Venue.Latitude,
                 Longitude = e.Venue.Longitude,
-                Status = e.Status.ToString()
+                Status = e.Status.ToString(),
+                HostBusinessId = e.HostBusinessId,
+                HostBusinessName = e.HostBusiness != null ? e.HostBusiness.Name : null
             })
             .ToListAsync();
     }
@@ -61,6 +64,7 @@ public class EventService : IEventService
         return await _dbContext.Events
             .AsNoTracking()
             .Include(e => e.Venue)
+            .Include(e => e.HostBusiness)
             .Where(e => e.Id == id)
             .Select(e => new EventDetailDto
             {
@@ -76,6 +80,10 @@ public class EventService : IEventService
                 ImageUrl = e.ImageUrl,
                 ExternalUrl = e.ExternalUrl,
                 Status = e.Status.ToString(),
+
+                HostBusinessId = e.HostBusinessId,
+                HostBusinessName = e.HostBusiness != null ? e.HostBusiness.Name : null,
+
                 VenueId = e.VenueId,
                 VenueName = e.Venue.Name,
                 AddressLine1 = e.Venue.AddressLine1,
@@ -102,6 +110,17 @@ public class EventService : IEventService
             throw new InvalidOperationException("Venue does not exist.");
         }
 
+        if (request.HostBusinessId.HasValue)
+        {
+            var hostBusinessExists = await _dbContext.Businesses
+                .AnyAsync(b => b.Id == request.HostBusinessId.Value);
+
+            if (!hostBusinessExists)
+            {
+                throw new InvalidOperationException("Host business does not exist.");
+            }
+        }
+
         var nowUtc = DateTime.UtcNow;
 
         var eventEntity = new Event
@@ -118,6 +137,7 @@ public class EventService : IEventService
             ImageUrl = request.ImageUrl,
             ExternalUrl = request.ExternalUrl,
             VenueId = request.VenueId,
+            HostBusinessId = request.HostBusinessId,
             Status = EventStatus.Published,
             CreatedAtUtc = nowUtc,
             UpdatedAtUtc = nowUtc
@@ -150,6 +170,17 @@ public class EventService : IEventService
             throw new InvalidOperationException("Venue does not exist.");
         }
 
+        if (request.HostBusinessId.HasValue)
+        {
+            var hostBusinessExists = await _dbContext.Businesses
+                .AnyAsync(b => b.Id == request.HostBusinessId.Value);
+
+            if (!hostBusinessExists)
+            {
+                throw new InvalidOperationException("Host business does not exist.");
+            }
+        }
+
         eventEntity.Title = request.Title.Trim();
         eventEntity.Description = request.Description;
         eventEntity.StartAtUtc = request.StartAtUtc;
@@ -161,6 +192,7 @@ public class EventService : IEventService
         eventEntity.ImageUrl = request.ImageUrl;
         eventEntity.ExternalUrl = request.ExternalUrl;
         eventEntity.VenueId = request.VenueId;
+        eventEntity.HostBusinessId = request.HostBusinessId;
         eventEntity.UpdatedAtUtc = DateTime.UtcNow;
 
         await _dbContext.SaveChangesAsync();

@@ -2,7 +2,7 @@
 
 using Faro.Domain.Enums;
 
-public class BusinessAccount : BaseEntity
+public class Business : BaseEntity
 {
     public string Name { get; set; } = string.Empty;
 
@@ -10,7 +10,7 @@ public class BusinessAccount : BaseEntity
 
     public string? BusinessType { get; set; }
 
-    public BusinessAccountStatus Status { get; set; } = BusinessAccountStatus.Pending;
+    public BusinessStatus Status { get; set; } = BusinessStatus.Pending;
 
     public BusinessVenueRelationship VenueRelationship { get; set; } = BusinessVenueRelationship.NoVenueNeeded;
 

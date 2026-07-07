@@ -28,9 +28,8 @@ namespace Faro.Domain.Entities
 
         public ICollection<Event> Events { get; set; } = new List<Event>();
 
-        public Guid? OwnerBusinessAccountId { get; set; }
-
-        public BusinessAccount? OwnerBusinessAccount { get; set; }
+        public Guid? OwnerBusinessId { get; set; }
+        public Business? OwnerBusiness { get; set; }
     }
 
 }
