@@ -16,6 +16,8 @@ export type EventSummaryDto = {
   latitude: number;
   longitude: number;
   status: string;
+  hostBusinessId: string | null;
+  hostBusinessName: string | null;
 };
 
 export async function getEvents(dateUtc?: string): Promise<EventSummaryDto[]> {
@@ -36,6 +38,22 @@ export async function getEvents(dateUtc?: string): Promise<EventSummaryDto[]> {
 
 export type CreateEventRequest = {
   title: string;
+  hostBusinessId?: string | null;
+  description?: string | null;
+  startAtUtc: string;
+  endAtUtc?: string | null;
+  isFree: boolean;
+  priceAmount?: number | null;
+  priceLabel?: string | null;
+  category?: string | null;
+  imageUrl?: string | null;
+  externalUrl?: string | null;
+  venueId: string;
+};
+
+export type UpdateEventRequest = {
+  title: string;
+  hostBusinessId?: string | null;
   description?: string | null;
   startAtUtc: string;
   endAtUtc?: string | null;
@@ -61,6 +79,8 @@ export type EventDetailDto = {
   imageUrl: string | null;
   externalUrl: string | null;
   status: string;
+  hostBusinessId: string | null;
+  hostBusinessName: string | null;
   venueId: string;
   venueName: string;
   addressLine1: string | null;
@@ -88,7 +108,31 @@ export async function createEvent(
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`Failed to create event. Status: ${response.status}. ${errorText}`);
+    throw new Error(
+      `Failed to create event. Status: ${response.status}. ${errorText}`
+    );
+  }
+
+  return response.json();
+}
+
+export async function updateEvent(
+  eventId: string,
+  request: UpdateEventRequest
+): Promise<EventDetailDto> {
+  const response = await fetch(`${API_BASE_URL}/events/${eventId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `Failed to update event. Status: ${response.status}. ${errorText}`
+    );
   }
 
   return response.json();

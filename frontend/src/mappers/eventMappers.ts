@@ -5,6 +5,8 @@ export function mapEventSummaryToEventPin(event: EventSummaryDto): EventPin {
   return {
     id: event.id,
     title: event.title,
+    hostBusinessId: event.hostBusinessId,
+    hostBusinessName: event.hostBusinessName,
 
     date: event.startAtUtc.split("T")[0],
     startAtUtc: event.startAtUtc,

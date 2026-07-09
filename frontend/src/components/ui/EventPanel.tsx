@@ -1,27 +1,33 @@
 import { useState } from "react";
-import type { EventPin } from "../../mocks/events";
+import type { EventPin } from "../../types/map";
 
 type EventPanelProps = {
   event: EventPin;
+  canEdit: boolean;
+  onEdit: () => void;
   onClose: () => void;
 };
 
-function EventPanel({ event, onClose }: EventPanelProps) {
+function EventPanel({ event, canEdit, onEdit, onClose }: EventPanelProps) {
   const [favorited, setFavorited] = useState(false);
   const [reserved, setReserved] = useState(false);
 
-  const venueLine = event.venueName || event.business || "Not provided";
-
-  const streetLine = [event.streetAddress, event.neighborhood]
-    .filter(Boolean)
-    .join(", ");
-
-  const cityLine = [event.city, event.postalCode].filter(Boolean).join(" ");
+  const priceLabel = event.isFree
+    ? "Free"
+    : event.priceLabel ?? `$${event.priceAmount ?? 0}`;
 
   return (
     <div className="absolute right-4 top-20 w-[360px] bg-neutral-900 text-white rounded-2xl shadow-xl border border-white/10 overflow-hidden">
-      <div className="p-4 border-b border-white/10 flex justify-between items-center">
-        <h2 className="font-semibold text-lg">{event.title}</h2>
+      <div className="p-4 border-b border-white/10 flex justify-between items-start gap-3">
+        <div>
+          <h2 className="font-semibold text-lg leading-tight">{event.title}</h2>
+
+          <div className="mt-1 text-sm text-white/60">
+            {event.hostBusinessName
+              ? `Hosted by ${event.hostBusinessName}`
+              : "Host business not provided"}
+          </div>
+        </div>
 
         <button
           onClick={onClose}
@@ -51,41 +57,35 @@ function EventPanel({ event, onClose }: EventPanelProps) {
 
         <div>
           <div className="text-white/60 mb-1">Location</div>
+
           <div className="space-y-1">
             <div className="font-medium text-white">
-              {venueLine}
+              {event.venueName || "Venue not provided"}
             </div>
 
-            {streetLine ? (
-              <div className="text-white/90">{streetLine}</div>
+            {event.address ? (
+              <div className="text-white/75">{event.address}</div>
             ) : (
-              <div className="text-white/50">Street not provided</div>
-            )}
-
-            {cityLine ? (
-              <div className="text-white/75">{cityLine}</div>
-            ) : (
-              <div className="text-white/50">City not provided</div>
-            )}
-
-            {event.address && (
-              <div className="mt-2 rounded-lg bg-white/5 px-3 py-2 text-xs text-white/55">
-                Resolved address: {event.address}
-              </div>
+              <div className="text-white/50">Address not provided</div>
             )}
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <div className="text-white/60 mb-1">Attendees</div>
-            <div>{event.attendees}</div>
+            <div className="text-white/60 mb-1">Category</div>
+            <div>{event.category || "Not provided"}</div>
           </div>
 
           <div>
             <div className="text-white/60 mb-1">Ticket Price</div>
-            <div>${event.ticketPrice}</div>
+            <div>{priceLabel}</div>
           </div>
+        </div>
+
+        <div>
+          <div className="text-white/60 mb-1">Status</div>
+          <div>{event.status}</div>
         </div>
 
         <div>
@@ -97,6 +97,21 @@ function EventPanel({ event, onClose }: EventPanelProps) {
       </div>
 
       <div className="p-4 border-t border-white/10 flex flex-col gap-2">
+        {canEdit && (
+          <button
+            onClick={onEdit}
+            className="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-500 font-medium transition"
+          >
+            Edit Event
+          </button>
+        )}
+
+        {!canEdit && event.hostBusinessId && (
+          <div className="rounded-lg bg-white/5 px-3 py-2 text-xs text-white/45">
+            You can only edit events owned by the currently selected business.
+          </div>
+        )}
+
         <button
           onClick={() => setReserved(!reserved)}
           className={`w-full py-2 rounded-lg font-medium transition ${

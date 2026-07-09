@@ -31,6 +31,9 @@ export type EventPin = {
   venueName: string;
   address: string;
 
+  hostBusinessId: string | null;
+  hostBusinessName: string | null;
+
   category: string | null;
   imageUrl: string | null;
 
