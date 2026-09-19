@@ -1,12 +1,13 @@
 import { useState } from "react";
 import type { EventPin } from "../../types/map";
-import { updateEvent } from "../../api/eventsApi";
+import { deleteEvent, updateEvent } from "../../api/eventsApi";
 
 type EditEventModalProps = {
   event: EventPin;
   selectedBusinessId: string;
   onClose: () => void;
   onUpdated: () => Promise<void>;
+  onDeleted: () => Promise<void>;
 };
 
 function EditEventModal({
@@ -14,6 +15,7 @@ function EditEventModal({
   selectedBusinessId,
   onClose,
   onUpdated,
+  onDeleted,
 }: EditEventModalProps) {
   const [title, setTitle] = useState(event.title);
   const [date, setDate] = useState(event.date);
@@ -25,10 +27,14 @@ function EditEventModal({
   const [imageUrl, setImageUrl] = useState(event.imageUrl ?? "");
 
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
+
   const [error, setError] = useState("");
 
   const canEdit =
-    event.hostBusinessId !== null && event.hostBusinessId === selectedBusinessId;
+    event.hostBusinessId !== null &&
+    event.hostBusinessId === selectedBusinessId;
 
   const handleSave = async () => {
     try {
@@ -72,9 +78,39 @@ function EditEventModal({
       onClose();
     } catch (err) {
       console.error(err);
-      setError(err instanceof Error ? err.message : "Could not update event.");
+
+      setError(
+        err instanceof Error ? err.message : "Could not update event."
+      );
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      setError("");
+
+      if (!canEdit) {
+        setError("You can only delete events owned by the selected business.");
+        return;
+      }
+
+      setIsDeleting(true);
+
+      await deleteEvent(event.id);
+
+      await onDeleted();
+
+      onClose();
+    } catch (err) {
+      console.error(err);
+
+      setError(
+        err instanceof Error ? err.message : "Could not delete event."
+      );
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -84,6 +120,7 @@ function EditEventModal({
         <div className="flex items-center justify-between border-b border-white/10 p-4">
           <div>
             <h2 className="text-lg font-semibold">Edit Event</h2>
+
             <div className="mt-1 text-sm text-white/60">
               {event.hostBusinessName
                 ? `Editing as ${event.hostBusinessName}`
@@ -91,7 +128,10 @@ function EditEventModal({
             </div>
           </div>
 
-          <button onClick={onClose} className="text-white/60 hover:text-white">
+          <button
+            onClick={onClose}
+            className="text-white/60 hover:text-white"
+          >
             ✕
           </button>
         </div>
@@ -118,7 +158,10 @@ function EditEventModal({
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="mb-1 block text-sm text-white/70">Date</label>
+                <label className="mb-1 block text-sm text-white/70">
+                  Date
+                </label>
+
                 <input
                   type="date"
                   value={date}
@@ -132,6 +175,7 @@ function EditEventModal({
                 <label className="mb-1 block text-sm text-white/70">
                   Category
                 </label>
+
                 <input
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
@@ -146,6 +190,7 @@ function EditEventModal({
               <label className="mb-1 block text-sm text-white/70">
                 Ticket Price
               </label>
+
               <input
                 type="number"
                 min="0"
@@ -155,6 +200,7 @@ function EditEventModal({
                 className="w-full rounded-lg bg-white/10 px-3 py-2 outline-none disabled:opacity-50"
                 placeholder="0"
               />
+
               <div className="mt-1 text-xs text-white/45">
                 Use 0 for a free event.
               </div>
@@ -177,18 +223,21 @@ function EditEventModal({
             </div>
 
             <div className="text-xs text-white/45">
-              Location editing will be handled separately because changing the
-              address also requires updating or replacing the venue.
+              Location editing will be added separately because changing the
+              address also requires replacing or updating the venue.
             </div>
           </section>
 
           <section className="space-y-3">
-            <div className="text-sm font-medium text-white/80">Optional</div>
+            <div className="text-sm font-medium text-white/80">
+              Optional
+            </div>
 
             <div>
               <label className="mb-1 block text-sm text-white/70">
                 Description
               </label>
+
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -202,6 +251,7 @@ function EditEventModal({
               <label className="mb-1 block text-sm text-white/70">
                 Image URL
               </label>
+
               <input
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
@@ -212,6 +262,56 @@ function EditEventModal({
             </div>
           </section>
 
+          {canEdit && (
+            <section className="rounded-xl border border-red-500/20 bg-red-500/5 p-4">
+              <div className="text-sm font-medium text-red-300">
+                Danger Zone
+              </div>
+
+              <div className="mt-1 text-xs text-white/50">
+                Deleting this event is permanent.
+              </div>
+
+              {!isConfirmingDelete ? (
+                <button
+                  type="button"
+                  onClick={() => setIsConfirmingDelete(true)}
+                  disabled={isSaving || isDeleting}
+                  className="mt-3 w-full rounded-lg bg-red-600/20 py-2 text-sm font-medium text-red-300 transition hover:bg-red-600/30 disabled:opacity-50"
+                >
+                  Delete Event
+                </button>
+              ) : (
+                <div className="mt-3 space-y-3">
+                  <div className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-200">
+                    Are you sure you want to permanently delete{" "}
+                    <span className="font-semibold">{event.title}</span>?
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsConfirmingDelete(false)}
+                      disabled={isDeleting}
+                      className="w-full rounded-lg bg-white/10 py-2 text-sm transition hover:bg-white/20 disabled:opacity-50"
+                    >
+                      Keep Event
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleDelete}
+                      disabled={isDeleting}
+                      className="w-full rounded-lg bg-red-600 py-2 text-sm font-medium transition hover:bg-red-500 disabled:opacity-50"
+                    >
+                      {isDeleting ? "Deleting..." : "Yes, Delete"}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </section>
+          )}
+
           {error && (
             <div className="rounded-lg bg-red-500/15 px-3 py-2 text-sm text-red-300">
               {error}
@@ -219,17 +319,18 @@ function EditEventModal({
           )}
         </div>
 
-        <div className="border-t border-white/10 p-4 flex gap-3">
+        <div className="flex gap-3 border-t border-white/10 p-4">
           <button
             onClick={onClose}
-            className="w-full rounded-lg bg-white/10 py-3 font-medium text-white transition hover:bg-white/20"
+            disabled={isSaving || isDeleting}
+            className="w-full rounded-lg bg-white/10 py-3 font-medium text-white transition hover:bg-white/20 disabled:opacity-50"
           >
             Cancel
           </button>
 
           <button
             onClick={handleSave}
-            disabled={isSaving || !canEdit}
+            disabled={isSaving || isDeleting || !canEdit}
             className="w-full rounded-lg bg-blue-600 py-3 font-medium text-white transition hover:bg-blue-500 disabled:opacity-60"
           >
             {isSaving ? "Saving..." : "Save Changes"}

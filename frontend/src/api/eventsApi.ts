@@ -137,3 +137,17 @@ export async function updateEvent(
 
   return response.json();
 }
+
+export async function deleteEvent(eventId: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/events/${eventId}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+
+    throw new Error(
+      `Failed to delete event. Status: ${response.status}. ${errorText}`
+    );
+  }
+}

@@ -1,6 +1,6 @@
 import MapView from "../map/MapView";
 import type { AppMode } from "../../App";
-import type { EventPin } from "../../mocks/events";
+import type { EventPin } from "../../types/map";
 
 type AppLayoutProps = {
   mode: AppMode;
@@ -11,7 +11,7 @@ type AppLayoutProps = {
 
   pendingEvent: EventPin | null;
   onPendingEventMove: (coordinates: [number, number]) => void;
-  
+
   children: React.ReactNode;
 };
 

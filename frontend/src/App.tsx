@@ -239,6 +239,10 @@ function App() {
           onUpdated={async () => {
             await loadEventsForDate(selectedDate);
           }}
+          onDeleted={async () => {
+            setSelectedEventId(null);
+            await loadEventsForDate(selectedDate);
+          }}
         />
       )}
 
