@@ -9,7 +9,7 @@ function HomePage() {
   const todayISO = new Date().toISOString().split("T")[0];
 
   const [selectedDate, setSelectedDate] = useState(todayISO);
-  const [mode, setMode] = useState<AppMode>("events");
+  const [mode] = useState<AppMode>("events");
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 
   const [events, setEvents] = useState<EventSummaryDto[]>([]);

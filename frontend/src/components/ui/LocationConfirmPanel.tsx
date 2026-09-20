@@ -1,4 +1,4 @@
-import type { EventPin } from "../../mocks/events";
+import type { EventPin } from "../../types/map";
 
 type LocationConfirmPanelProps = {
   event: EventPin;
@@ -28,7 +28,7 @@ function LocationConfirmPanel({
 
         <div>
           <div className="text-white/60">Venue</div>
-          <div>{event.venueName || event.business || "Not provided"}</div>
+          <div>{event.venueName || "Not provided"}</div>
         </div>
 
         <div>
