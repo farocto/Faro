@@ -1,2 +1,85 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&display=swap");
+
 @import "tailwindcss";
 
+@theme {
+  --font-display: "Fraunces", Georgia, serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+
+  --color-harbor: #1f163d;
+  --color-night: #0f172a;
+  --color-cloud: #f3f4f6;
+  --color-beacon: #14b8a6;
+  --color-beacon-light: #2dd4bf;
+  --color-slate: #64748b;
+  --color-amber: #f59e0b;
+  --color-amber-soft: #fef3c7;
+  --color-harbor-soft: #e9e7f2;
+  --color-cloud-dark: #e2e5ea;
+
+  --tracking-editorial: 0.16em;
+  --tracking-wide: 0.1em;
+
+  --shadow-editorial: 0 20px 60px rgba(31, 22, 61, 0.14);
+
+  --animate-fade-up: fade-up 0.55s ease-out forwards;
+  --animate-beacon-pulse: beacon-pulse 2.8s ease-in-out infinite;
+}
+
+@keyframes fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes beacon-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.22);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(245, 158, 11, 0);
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    @apply bg-cloud font-sans text-night antialiased;
+  }
+
+  ::selection {
+    @apply bg-amber-soft text-harbor;
+  }
+
+  button,
+  input {
+    font: inherit;
+  }
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
