@@ -17,12 +17,9 @@ import { mapEventSummariesToEventPins } from "./mappers/eventMappers";
 import type { BusinessDto } from "./api/businessesApi";
 import { getBusinessesForUser } from "./api/businessesApi";
 
-export type AppMode = "events";
-
 const DEV_USER_ACCOUNT_ID = "0F945146-18D9-408B-BEF8-68ECE1426E23";
 
 function App() {
-  const [mode] = useState<AppMode>("events");
 
   const todayISO = new Date().toISOString().split("T")[0];
 
@@ -166,13 +163,12 @@ function App() {
 
   return (
     <AppLayout
-      mode={mode}
-      selectedDate={selectedDate}
-      events={events}
-      selectedEventId={selectedEventId}
-      onSelectEvent={setSelectedEventId}
-      pendingEvent={pendingEvent}
-      onPendingEventMove={handlePendingEventMove}
+    selectedDate={selectedDate}
+    events={events}
+    selectedEventId={selectedEventId}
+    onSelectEvent={setSelectedEventId}
+    pendingEvent={pendingEvent}
+    onPendingEventMove={handlePendingEventMove}
     >
       <div className="absolute top-4 right-4 pointer-events-auto">
         <CreateEventButton onClick={() => setIsCreateModalOpen(true)} />

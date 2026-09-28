@@ -1,9 +1,7 @@
 import MapView from "../map/MapView";
-import type { AppMode } from "../../App";
 import type { EventPin } from "../../types/map";
 
 type AppLayoutProps = {
-  mode: AppMode;
   selectedDate: string;
   selectedEventId: string | null;
   onSelectEvent: (id: string | null) => void;
@@ -16,7 +14,6 @@ type AppLayoutProps = {
 };
 
 function AppLayout({
-  mode,
   selectedDate,
   selectedEventId,
   onSelectEvent,
@@ -29,7 +26,6 @@ function AppLayout({
     <div className="relative h-screen w-screen overflow-hidden">
       <div className="absolute inset-0">
         <MapView
-          mode={mode}
           selectedDate={selectedDate}
           selectedEventId={selectedEventId}
           onSelectEvent={onSelectEvent}

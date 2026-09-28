@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import DateSlider from "../components/ui/DateSlider";
 import MapView from "../components/map/MapView";
-import type { AppMode } from "../App";
 import { getEvents, type EventSummaryDto } from "../api/eventsApi";
 import { mapEventSummariesToEventPins } from "../mappers/eventMappers";
 
@@ -9,7 +8,6 @@ function HomePage() {
   const todayISO = new Date().toISOString().split("T")[0];
 
   const [selectedDate, setSelectedDate] = useState(todayISO);
-  const [mode] = useState<AppMode>("events");
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 
   const [events, setEvents] = useState<EventSummaryDto[]>([]);
@@ -56,7 +54,6 @@ function HomePage() {
       )}
 
       <MapView
-        mode={mode}
         selectedDate={selectedDate}
         selectedEventId={selectedEventId}
         onSelectEvent={setSelectedEventId}

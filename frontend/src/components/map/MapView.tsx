@@ -2,14 +2,12 @@ import { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-import type { AppMode } from "../../App";
 import type { EventPin } from "../../types/map";
 import { mockSafetyZones } from "../../mocks/safetyZones";
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
 type MapViewProps = {
-  mode: AppMode;
   selectedDate: string;
   events: EventPin[];
   selectedEventId: string | null;
@@ -20,7 +18,6 @@ type MapViewProps = {
 };
 
 function MapView({
-  mode,
   selectedDate,
   events,
   selectedEventId,
@@ -103,32 +100,32 @@ function MapView({
   }, [onSelectEvent]);
 
   useEffect(() => {
-    if (!mapRef.current) return;
+  if (!mapRef.current) return;
 
-    markersRef.current.forEach((m) => m.remove());
-    markersRef.current = [];
+  markersRef.current.forEach((marker) => marker.remove());
+  markersRef.current = [];
 
-    if (mode !== "events") return;
+  const filteredEvents = events.filter(
+    (event) => event.date === selectedDate,
+  );
 
-    const filteredEvents = events.filter((event) => event.date === selectedDate);
+  filteredEvents.forEach((event) => {
+    const isSelected = event.id === selectedEventId;
 
-    filteredEvents.forEach((event) => {
-      const isSelected = event.id === selectedEventId;
+    const marker = new mapboxgl.Marker({
+      color: isSelected ? "#ffffff" : "#3b82f6",
+    })
+      .setLngLat(event.coordinates)
+      .addTo(mapRef.current!);
 
-      const marker = new mapboxgl.Marker({
-        color: isSelected ? "#ffffff" : "#3b82f6",
-      })
-        .setLngLat(event.coordinates)
-        .addTo(mapRef.current!);
-
-      marker.getElement().addEventListener("click", (e) => {
-        e.stopPropagation();
-        onSelectEvent(event.id);
-      });
-
-      markersRef.current.push(marker);
+    marker.getElement().addEventListener("click", (e) => {
+      e.stopPropagation();
+      onSelectEvent(event.id);
     });
-  }, [mode, selectedDate, selectedEventId, events, onSelectEvent]);
+
+    markersRef.current.push(marker);
+  });
+}, [selectedDate, selectedEventId, events, onSelectEvent]);
 
   useEffect(() => {
     if (!mapRef.current) return;
