@@ -23,7 +23,7 @@ function AppLayout({
   children,
 }: AppLayoutProps) {
   return (
-    <div className="relative h-screen w-screen overflow-hidden">
+    <div className="relative h-dvh w-full overflow-hidden">
       <div className="absolute inset-0">
         <MapView
           selectedDate={selectedDate}

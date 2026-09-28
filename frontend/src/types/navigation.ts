@@ -1,0 +1,1 @@
+export type AppSection = "city" | "editorial";

@@ -20,7 +20,18 @@ import { getBusinessesForUser } from "@/api/businessesApi";
 
 const DEV_USER_ACCOUNT_ID = "0F945146-18D9-408B-BEF8-68ECE1426E23";
 
-function CityPage() {
+type CityPageProps = {createEventRequestId: number;};
+
+function CityPage({
+  createEventRequestId,
+}: CityPageProps) {
+
+  useEffect(() => {
+  if (createEventRequestId > 0) 
+  {
+    setIsCreateModalOpen(true);
+  }
+  }, [createEventRequestId]);
 
   const todayISO = new Date().toISOString().split("T")[0];
 
@@ -195,7 +206,7 @@ function CityPage() {
         <DateSlider selectedDate={selectedDate} onChange={setSelectedDate} />
       </div>
 
-      <div className="absolute bottom-4 left-4 pointer-events-auto">
+      <div className="absolute bottom-20 left-4 pointer-events-auto lg:bottom-4">
         <SafetyLegend />
       </div>
 
@@ -266,7 +277,7 @@ function CityPage() {
       )}
 
       {selectedEventId && !pendingEvent && !isEditModalOpen && (
-        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 bg-black/80 text-white px-4 py-2 rounded-xl text-sm pointer-events-none">
+        <div className="absolute bottom-24 lg:bottom-20 left-1/2 -translate-x-1/2 bg-black/80 text-white px-4 py-2 rounded-xl text-sm pointer-events-none">
           Selected event: {selectedEventId}
         </div>
       )}
